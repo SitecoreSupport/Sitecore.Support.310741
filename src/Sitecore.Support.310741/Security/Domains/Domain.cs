@@ -39,12 +39,11 @@ namespace Sitecore.Support.Security.Domains
 
         public List<User> GetUserListByEmail(string search)
         {
-            string searchWithNoWildcard = StringUtil.RemovePostfix(Settings.Authentication.VirtualMembershipWildcard,
-                StringUtil.RemovePrefix(Settings.Authentication.VirtualMembershipWildcard, search));
+            bool matched = Regex.IsMatch(search, @"[@]"); // check if search contains "@"
             var list = new List<User>();
-            if (searchWithNoWildcard.Contains("@"))
+            if (matched)
             {
-                MembershipUserCollection usersByEmail = Membership.FindUsersByEmail(searchWithNoWildcard);
+                MembershipUserCollection usersByEmail = Membership.FindUsersByEmail(search);
                 foreach (MembershipUser membershipUser in usersByEmail)
                 {
                     User sitecoreUser = User.FromName(membershipUser.UserName, false);
